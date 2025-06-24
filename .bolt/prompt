@@ -1,0 +1,66 @@
+You are building "MediScan AI" - a HIPAA-compliant edge-based medical billing analysis platform that empowers patients to identify billing errors and potential fraud in their medical documents. This is a hackathon project showcasing innovative use of AI for healthcare transparency.
+
+TECHNOLOGY STACK REQUIREMENTS:
+- Frontend: React 18+ with TypeScript, Vite build system, Tailwind CSS for styling
+- UI Components: Mantine v7 or Chakra UI for healthcare-focused accessible components
+- Backend: Node.js with Express, lightweight API architecture
+- Database: SQLite with SQLAlchemy ORM for local development
+- Authentication: JWT-based with session management
+- File Processing: Support for PDF, JPG, PNG medical documents
+- State Management: Zustand or React Query for lightweight state handling
+
+CORE FEATURES TO IMPLEMENT:
+1. Secure user authentication with healthcare-grade security
+2. Drag-and-drop medical document upload interface
+3. Local OCR processing simulation (edge computing approach)
+4. AI-powered medical code detection and validation
+5. Patient-friendly explanations of complex medical terminology
+6. Error flagging system with visual indicators
+7. Dispute letter generation templates
+8. Document management dashboard
+
+HIPAA COMPLIANCE REQUIREMENTS:
+- All PHI processing must simulate local/edge processing
+- Implement AES-256 encryption for data storage
+- Use secure session management with automatic timeouts
+- Include comprehensive audit logging capabilities
+- Display clear privacy messaging throughout the interface
+- Implement biometric authentication simulation for mobile
+
+DESIGN GUIDELINES:
+- Use healthcare blue/green color schemes for trust and professionalism
+- Implement high contrast ratios for accessibility compliance
+- Create large, touch-friendly interactive elements
+- Include clear visual hierarchy with medical-grade typography
+- Add security indicators and "processed locally" messaging
+- Design for both desktop and mobile responsiveness
+
+AI INTEGRATION REQUIREMENTS:
+- Leverage Bolt's underlying LLM for generating patient-friendly explanations
+- Create intelligent medical code translation (CPT/ICD-10 to plain language)
+- Implement AI-powered dispute letter generation
+- Build smart error detection with pattern recognition
+- Generate contextual help and guidance for users
+
+DEVELOPMENT APPROACH:
+- Start with authentication and core app structure
+- Build document upload and preview functionality incrementally
+- Add OCR simulation and data extraction features
+- Implement AI explanation and communication generation
+- Focus on clean, production-ready code with proper error handling
+- Ensure all components are accessible and HIPAA-conscious
+
+SPECIFIC BOLT UTILIZATION:
+- Use Bolt's prompt enhancement feature for complex medical logic
+- Leverage generative AI for content creation (explanations, templates)
+- Implement Supabase integration for secure data management
+- Utilize Netlify deployment for live demonstration
+- Showcase advanced LLM integration for healthcare applications
+
+PERFORMANCE REQUIREMENTS:
+- OCR processing simulation should complete within 30 seconds
+- Support documents up to 16MB in size
+- Ensure responsive performance across all screen sizes
+- Implement progressive loading for better user experience
+
+Remember: This is an edge computing solution emphasizing local processing and HIPAA compliance. Every feature should reinforce patient privacy and data security while delivering powerful AI-driven insights.
