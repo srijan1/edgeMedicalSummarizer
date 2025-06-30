@@ -1,29 +1,72 @@
 {
   "expo": {
-    "name": "mediscan-ai",
+    "name": "MediScan AI",
     "slug": "mediscan-ai",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "userInterfaceStyle": "automatic",
+    "scheme": "mediscan",
+    "platforms": ["ios", "android", "web"],
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#2563EB"
     },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mediscan.ai",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses camera to scan medical bills for analysis",
+        "NSPhotoLibraryUsageDescription": "This app accesses photo library to select medical bills for analysis"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#2563EB"
       },
-      "edgeToEdgeEnabled": true
+      "package": "com.mediscan.ai",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "static",
+      "name": "MediScan AI - Medical Bill Analysis"
+    },
+    "plugins": [
+      "expo-font",
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow MediScan AI to access camera for scanning medical bills"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "MediScan AI needs access to your photo library to select medical bills for analysis"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      }
     }
   }
 }
