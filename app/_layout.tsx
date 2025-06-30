@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { useFonts } from 'expo-font';
 import {
   Inter_400Regular,
@@ -51,6 +51,7 @@ export default function RootLayout() {
 
   return (
     <View style={styles.container}>
+
       <SafeAreaProvider>
         {!isAuthenticated ? (
           <LoginScreen onLogin={handleLogin} />
@@ -58,6 +59,7 @@ export default function RootLayout() {
           <TabNavigator onLogout={handleLogout} />
         )}
       </SafeAreaProvider>
+
     </View>
   );
 }

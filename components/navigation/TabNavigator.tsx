@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Platform, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native';
-import { Upload, Search, ChartBar as BarChart3, User, Chrome as Home } from 'lucide-react-native';
+import { Upload, Search, MessageCircleIcon, ChartBar as BarChart3, User, Chrome as Home } from 'lucide-react-native';
 import DashboardScreen from '@/components/screens/DashboardScreen';
 import UploadScreen from '@/components/screens/UploadScreen';
 import ProcessingScreen from '@/components/screens/ProcessingScreen';
@@ -18,7 +18,7 @@ export type TabType = 'dashboard' | 'upload' | 'processing' | 'analytics' | 'pro
 const tabs = [
   { id: 'dashboard', title: 'Dashboard', icon: Home },
   { id: 'upload', title: 'Upload', icon: Upload },
-  { id: 'processing', title: 'Review', icon: Search },
+  { id: 'processing', title: 'Ask', icon: MessageCircleIcon },
   { id: 'analytics', title: 'Analytics', icon: BarChart3 },
   { id: 'profile', title: 'Profile', icon: User },
 ];

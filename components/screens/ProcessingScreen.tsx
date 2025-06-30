@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Eye, Flag, Download, FileText, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle } from 'lucide-react-native';
 import { TabType } from '../navigation/TabNavigator';
+import ChatScreen from './ChatScreen';
 
 const PROCESSING_STEPS = [
   'Initializing secure scan...',
@@ -57,10 +58,12 @@ const MOCK_EXTRACTED_DATA = [
 
 interface ProcessingScreenProps {
   uploadData?: any;
+  image: string;
   onNavigate: (tab: TabType, data?: any) => void;
 }
 
-export default function ProcessingScreen({ uploadData, onNavigate }: ProcessingScreenProps) {
+export default function ProcessingScreen({ uploadData, image, onNavigate }: ProcessingScreenProps) {
+
   const [isProcessing, setIsProcessing] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const [showResults, setShowResults] = useState(false);
@@ -162,108 +165,7 @@ export default function ProcessingScreen({ uploadData, onNavigate }: ProcessingS
   }
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Bill Analysis Complete</Text>
-        <Text style={styles.subtitle}>Review the extracted information and flagged items</Text>
-      </View>
-
-      {/* Results Summary */}
-      <View style={styles.summaryContainer}>
-        <View style={styles.summaryStats}>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>4</Text>
-            <Text style={styles.statLabel}>Items Found</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>1</Text>
-            <Text style={styles.statLabel}>Flagged</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>$295</Text>
-            <Text style={styles.statLabel}>Total Amount</Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Split View: Document and Data */}
-      <View style={styles.splitContainer}>
-        {/* Document Preview */}
-        <View style={styles.documentSection}>
-          <Text style={styles.sectionTitle}>Original Document</Text>
-          <View style={styles.documentPreview}>
-            <Image
-              source={{ uri: uploadData?.image || 'https://images.pexels.com/photos/263402/pexels-photo-263402.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=2' }}
-              style={styles.documentImage}
-            />
-            <View style={styles.documentOverlay}>
-              <TouchableOpacity style={styles.viewButton}>
-                <Eye size={16} color="#FFFFFF" />
-                <Text style={styles.viewButtonText}>View Full</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-
-        {/* Extracted Data */}
-        <View style={styles.dataSection}>
-          <Text style={styles.sectionTitle}>Extracted Information</Text>
-
-          {MOCK_EXTRACTED_DATA.map((item) => (
-            <View key={item.id} style={styles.dataItem}>
-              <View style={styles.dataHeader}>
-                <View style={styles.codeContainer}>
-                  <Text style={styles.codeText}>{item.code}</Text>
-                  <View style={[
-                    styles.statusBadge,
-                    item.status === 'flagged' ? styles.flaggedBadge : styles.verifiedBadge
-                  ]}>
-                    {item.status === 'flagged' ? (
-                      <AlertTriangle size={12} color="#EF4444" />
-                    ) : (
-                      <CheckCircle size={12} color="#059669" />
-                    )}
-                  </View>
-                </View>
-                <Text style={styles.amountText}>{item.amount}</Text>
-              </View>
-
-              <Text style={styles.descriptionText}>{item.description}</Text>
-
-              <View style={styles.explanationContainer}>
-                <Text style={styles.explanationText}>{item.explanation}</Text>
-              </View>
-
-              {item.status === 'flagged' && (
-                <TouchableOpacity
-                  style={styles.flagButton}
-                  onPress={() => handleFlagIssue(item.id)}
-                >
-                  <Flag size={16} color="#EF4444" />
-                  <Text style={styles.flagButtonText}>Report Issue</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          ))}
-        </View>
-      </View>
-
-      {/* Action Buttons */}
-      <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.primaryAction} onPress={handleDownloadReport}>
-          <Download size={20} color="#FFFFFF" />
-          <Text style={styles.primaryActionText}>Download Report</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.secondaryAction} onPress={handleGenerateDispute}>
-          <FileText size={20} color="#2563EB" />
-          <Text style={styles.secondaryActionText}>Generate Dispute Letter</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+    <ChatScreen data={uploadData} />
   );
 }
 
