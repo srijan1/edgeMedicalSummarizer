@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Platform,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { FileText, Calendar, MapPin, Star } from 'lucide-react-native';
@@ -18,6 +19,7 @@ import SectionHeader from '@/components/layout/SectionHeader';
 import { TabType } from '../navigation/TabNavigator';
 import { uploadImageForOCR } from '@/services/services';
 
+import DateTimePicker from '@react-native-community/datetimepicker';
 const billTypes = [
   { label: 'Hospital', value: 'hospital' },
   { label: 'Clinic', value: 'clinic' },
@@ -1038,9 +1040,9 @@ export default function UploadScreen({ onNavigate }: UploadScreenProps) {
       },
       "success": true
     }
-    if (result || true) {
+    if (result) {
       onNavigate('processing', {
-        uploadData: dummyData?.result?.extracted_codes,
+        uploadData: result?.result?.extracted_codes,
         image: selectedImage
       });
     }
@@ -1070,7 +1072,24 @@ export default function UploadScreen({ onNavigate }: UploadScreenProps) {
       </TouchableOpacity>
     ));
   };
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
+  // Add this function to handle date selection
+  const handleDateChange = (event: any, date?: Date) => {
+    setShowDatePicker(Platform.OS === 'ios'); // Keep open on iOS, close on Android
+    if (date) {
+      setSelectedDate(date);
+      // Format the date as MM/DD/YYYY
+      const formattedDate = `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`;
+      setDueDate(formattedDate);
+    }
+  };
+
+  // Add this function to open the calendar
+  const openCalendar = () => {
+    setShowDatePicker(true);
+  };
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Header */}
@@ -1128,14 +1147,27 @@ export default function UploadScreen({ onNavigate }: UploadScreenProps) {
           </View>
 
           {/* Due Date */}
-          <InputGroup
-            label="Due Date"
-            value={dueDate}
-            onChangeText={setDueDate}
-            placeholder="MM/DD/YYYY"
-            icon={Calendar}
-          />
+          <View >
+            <InputGroup
+              label="Due Date"
+              value={dueDate}
+              onChangeText={setDueDate}
+              placeholder="DD/MM/YYYY"
+              icon={null as any}
+            />
+            <TouchableOpacity onPress={openCalendar} style={{ position: 'absolute', right: 16, top: '44%' }}>
+              <Calendar size={20} color="#64748B" />
+            </TouchableOpacity>
+          </View>
 
+          {showDatePicker && (
+            <DateTimePicker
+              value={selectedDate}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              onChange={handleDateChange}
+            />
+          )}
           {/* Location */}
           <InputGroup
             label="Where is the bill from?"

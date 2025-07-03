@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Platform, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native';
 import { Upload, Search, MessageCircleIcon, ChartBar as BarChart3, User, Chrome as Home } from 'lucide-react-native';
@@ -26,6 +26,18 @@ export default function TabNavigator({ onLogout }: TabNavigatorProps) {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
   const [uploadData, setUploadData] = useState<any>(null);
   const { bottom, top } = useSafeAreaInsets();
+
+  // Calculate just the visual tab bar height that needs keyboard clearance
+  const tabBarHeight = useMemo(() => {
+    if (Platform.OS === 'ios') {
+      // For iOS: base tab height + minimal padding
+      return 60 + bottom;
+    } else {
+      // For Android: proportional to screen size + safe area
+      return bottom;
+    }
+  }, [bottom, height]);
+
   const navigateToTab = (tab: TabType, data?: any) => {
     setActiveTab(tab);
     if (data) {
@@ -40,7 +52,7 @@ export default function TabNavigator({ onLogout }: TabNavigatorProps) {
       case 'upload':
         return <UploadScreen onNavigate={navigateToTab} />;
       case 'processing':
-        return <ProcessingScreen uploadData={uploadData} onNavigate={navigateToTab} />;
+        return <ProcessingScreen uploadData={uploadData} onNavigate={navigateToTab} tabBarHeight={tabBarHeight} />;
       case 'analytics':
         return <AnalyticsScreen onNavigate={navigateToTab} />;
       case 'profile':

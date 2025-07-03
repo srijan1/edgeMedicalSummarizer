@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
     View,
     TextInput,
@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getFriendliResponse } from '@/services/services';
 
 type Message = {
     id: string;
@@ -95,14 +96,13 @@ const TypingIndicator = () => {
     );
 };
 
-export default function ChatScreen({ data }: { data: any }) {
-    console.log(`🚀 ~ ChatScreen.tsx:22 ~ ChatScreen ~ data:`, data.uploadData)
+export default function ChatScreen({ data, tabBarHeight }: { data: any; tabBarHeight?: number }) {
     const uniqueCodeTypes = Array.from(
         new Set(data?.uploadData?.map((item: any) => item.code_type))
     );
-    const firstMessage = `✅ We've received your information. Here are the extracted code types:\n\n${uniqueCodeTypes
+    const firstMessage = `✅ We've received your information.${uniqueCodeTypes?.length > 0 ? ` Here are the extracted code types:\n\n${uniqueCodeTypes
         .map((type, idx) => `${idx + 1}. ${type}`)
-        .join('\n')}
+        .join('\n')}` : ''}
 What do you want to know about?`;
 
     // Predefined questions and answers based on medical codes
@@ -139,43 +139,81 @@ What do you want to know about?`;
     const [inputText, setInputText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const { bottom } = useSafeAreaInsets();
+    const flatListRef = useRef<FlatList>(null);
+    // Calculate proper keyboard offset accounting for tab bar height
+    const keyboardVerticalOffset = useMemo(() => {
+        if (Platform.OS === 'ios') {
+            // Use the actual tab bar height if provided, otherwise fallback to a safe default
+            return tabBarHeight || 120;
+        } else {
+            // On Android, use the tab bar height plus some additional padding
+            return (tabBarHeight || 80) + bottom + 36;
+        }
+    }, [tabBarHeight, bottom]);
 
-    const sendMessage = () => {
+    const sendMessage = async () => {
         if (!inputText.trim()) return;
-
+        flatListRef?.current?.scrollToOffset({ offset: 0, animated: true });
         const newMessage: Message = {
             id: Date.now().toString(),
             text: inputText,
             sender: 'user',
         };
-        setMessages((prev) => [...prev, newMessage]);
         setInputText('');
+        setMessages((prev) => [...prev, newMessage]);
+        const response = await handleSendMessage(inputText);
+        setIsTyping(true);
+        // Add bot response after delay
+        if (response) {
+
+            const botMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                text: response,
+                sender: 'bot',
+            };
+            setIsTyping(false);
+            setMessages((prev) => [...prev, botMessage]);
+
+            setInputText('');
+        }
+        setIsTyping(false);
     };
 
-    const handleQuestionSuggestion = (qa: QuestionAnswer) => {
-        const userMessage: Message = {
+    const handleQuestionSuggestion = async (qa: QuestionAnswer) => {
+        if (!qa.question.trim()) return;
+        flatListRef?.current?.scrollToOffset({ offset: 0, animated: true });
+        const newMessage: Message = {
             id: Date.now().toString(),
             text: qa.question,
             sender: 'user',
         };
+        setInputText('');
 
-        // Add user message immediately
-        setMessages((prev) => [...prev, userMessage]);
-
-        // Show typing indicator
+        setMessages((prev) => [...prev, newMessage]);
         setIsTyping(true);
+        try {
+            const response = await handleSendMessage(qa.question);
 
-        // Add bot response after delay
-        setTimeout(() => {
-            const botMessage: Message = {
-                id: (Date.now() + 1).toString(),
-                text: qa.answer,
-                sender: 'bot',
-            };
+            if (response) {
+                const botMessage: Message = {
+                    id: (Date.now() + 1).toString(),
+                    text: response,
+                    sender: 'bot',
+                };
+                setIsTyping(false);
+
+                setMessages((prev) => [...prev, botMessage]);
+
+            }
+
+            setInputText('');
+        } catch (error) {
 
             setIsTyping(false);
-            setMessages((prev) => [...prev, botMessage]);
-        }, 2000); // 1.5 second delay
+            return;
+        }
+        // Add bot response after delay
+
     };
 
     const renderItem = ({ item }: { item: Message }) => (
@@ -211,15 +249,20 @@ What do you want to know about?`;
             <Text style={{ color: '#007AFF', fontSize: 14 }}>{qa.question}</Text>
         </TouchableOpacity>
     );
+    const handleSendMessage = async (content: string): Promise<string> => {
+        const response = await getFriendliResponse(content);
 
+        return response?.toString() || '';
+    };
     return (
         <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: '#fff' }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : bottom}
+            keyboardVerticalOffset={keyboardVerticalOffset}
         >
             <View style={{ flex: 1 }}>
                 <FlatList
+                    ref={flatListRef}
                     data={[...messages].reverse()}
                     keyExtractor={(item) => item.id}
                     renderItem={renderItem}

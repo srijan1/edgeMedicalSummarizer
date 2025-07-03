@@ -55,7 +55,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     setTimeout(() => {
       setIsLoading(false);
       onLogin();
-    }, 2000);
+    }, 1000);
   };
 
   const handleForgotPassword = () => {

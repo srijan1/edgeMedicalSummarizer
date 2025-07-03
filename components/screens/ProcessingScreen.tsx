@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Eye, Flag, Download, FileText, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle } from 'lucide-react-native';
 import { TabType } from '../navigation/TabNavigator';
-import ChatScreen from './ChatScreen';
+import ChatScreen from '../screens/ChatScreen';
 
 const PROCESSING_STEPS = [
   'Initializing secure scan...',
@@ -58,11 +58,12 @@ const MOCK_EXTRACTED_DATA = [
 
 interface ProcessingScreenProps {
   uploadData?: any;
-  image: string;
+  image?: string;
   onNavigate: (tab: TabType, data?: any) => void;
+  tabBarHeight?: number;
 }
 
-export default function ProcessingScreen({ uploadData, image, onNavigate }: ProcessingScreenProps) {
+export default function ProcessingScreen({ uploadData, image, onNavigate, tabBarHeight }: ProcessingScreenProps) {
 
   const [isProcessing, setIsProcessing] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
@@ -165,7 +166,7 @@ export default function ProcessingScreen({ uploadData, image, onNavigate }: Proc
   }
 
   return (
-    <ChatScreen data={uploadData} />
+    <ChatScreen data={uploadData} tabBarHeight={tabBarHeight} />
   );
 }
 

@@ -1,5 +1,8 @@
-const API_URL =
-  "https://6379-2409-40d0-1486-505c-e1d2-9424-cafc-49a.ngrok-free.app";
+import { ToastAndroid } from "react-native";
+const API_URL = process.env.API_URL || "";
+const FRIENDLI_URL = process.env.EXPO_PUBLIC_FRIENDLI_URL || "";
+const FRIENDLI_MODEL = process.env.EXPO_PUBLIC_FRIENDLI_MODEL || "";
+const FRIENDLI_TOKEN = process.env.EXPO_PUBLIC_FRIENDLI_TOKEN || "";
 
 export async function uploadImageForOCR(filePath: string) {
   const formData = new FormData();
@@ -33,7 +36,10 @@ export async function uploadImageForOCR(filePath: string) {
     }
     return { response: OCRresponse, result: null };
   } catch (error) {
-    // console.error("Error uploading image:", error);
+    ToastAndroid.show(
+      "Facing some technical issue while extracting image content",
+      ToastAndroid.SHORT
+    );
     return { response: null, result: null };
   }
 }
@@ -54,9 +60,54 @@ export async function extractMedicalCodes(text: string) {
     }
 
     const result = await response.json();
+
     return { response, result };
   } catch (error) {
-    console.error("Error calling code-extract API:", error);
+    ToastAndroid.show(
+      "Facing some technical issue while extracting codes",
+      ToastAndroid.SHORT
+    );
     return { response: null, result: null };
+  }
+}
+
+export async function getFriendliResponse(content: string) {
+  const url = `${FRIENDLI_URL}`;
+  const payload = {
+    model: FRIENDLI_MODEL,
+    messages: [
+      {
+        role: "user",
+        content: content,
+      },
+    ],
+    max_tokens: 100,
+    top_p: 0.8,
+    temperature: 1.0,
+    stream: false,
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${FRIENDLI_TOKEN}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    // console.log("Assistant response:", data.choices?.[0]?.message?.content);
+    return data.choices?.[0]?.message?.content;
+  } catch (error) {
+    ToastAndroid.show(
+      "Facing some technical issue while generating response",
+      ToastAndroid.SHORT
+    );
   }
 }
